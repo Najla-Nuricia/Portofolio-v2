@@ -1,0 +1,13 @@
+---
+import AuthoringApp from "../../components/admin/AuthoringApp";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAdminRows } from "../../lib/admin-content";
+
+const author = Astro.request.headers.get("cf-access-authenticated-user-email") ?? "Local author";
+const rows = await getAdminRows();
+const query = Astro.url.searchParams.get("collection") ?? "";
+---
+
+<BaseLayout title="Authoring area — Najla Portfolio" description="Private portfolio authoring area" noindex>
+  <AuthoringApp rows={rows} author={author} query={query} client:load />
+</BaseLayout>

@@ -1,0 +1,10 @@
+---
+import AuthoringApp from "../../components/admin/AuthoringApp";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const author = Astro.request.headers.get("cf-access-authenticated-user-email") ?? "Local author";
+---
+
+<BaseLayout title="New content — Najla Portfolio" description="Create portfolio content" noindex>
+  <AuthoringApp author={author} client:load />
+</BaseLayout>

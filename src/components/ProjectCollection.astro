@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ProjectCard from "./ProjectCard.astro";
+
+interface Props {
+  projects: CollectionEntry<"project">[];
+}
+
+const { projects } = Astro.props;
+const featured = projects.slice(0, 4);
+const extra = projects.slice(4);
+---
+
+<div class="grid grid-cols-2 gap-x-6 gap-y-10 max-[760px]:grid-cols-1">
+  {featured.map((project, index) => <ProjectCard project={project} index={index} />)}
+</div>
+
+{extra.length > 0 && (
+  <details class="project-more mt-12">
+    <summary class="button secondary mx-auto w-fit cursor-pointer list-none marker:hidden">
+      <span class="when-closed">View {extra.length} more projects ↓</span>
+      <span class="when-open">Show fewer projects ↑</span>
+    </summary>
+    <div class="project-more-grid mt-12 grid grid-cols-2 gap-x-6 gap-y-10 max-[760px]:grid-cols-1">
+      {extra.map((project, index) => <ProjectCard project={project} index={index + 4} />)}
+    </div>
+  </details>
+)}
+
+<style>
+  .when-open { display: none; }
+  details[open] .when-open { display: inline; }
+  details[open] .when-closed { display: none; }
+  details[open] .project-more-grid {
+    animation: project-reveal 320ms cubic-bezier(.22, 1, .36, 1) both;
+  }
+  @keyframes project-reveal {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    details[open] .project-more-grid { animation: none; }
+  }
+</style>

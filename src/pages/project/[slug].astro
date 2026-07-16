@@ -1,0 +1,101 @@
+---
+import { Image } from "astro:assets";
+import { getCollection, getEntry, render } from "astro:content";
+import Gallery from "../../components/Gallery";
+import StudioRail from "../../components/StudioRail.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { byNewest } from "../../lib/content";
+import { formatYear } from "../../lib/date";
+
+const slug = Astro.params.slug ?? "";
+const project = await getEntry("project", slug);
+if (!project || !project.data.published) return Astro.rewrite("/404");
+
+const projects = byNewest(await getCollection("project", ({ data }) => data.published));
+const index = projects.findIndex((item) => item.id === project.id);
+const previous = projects[index - 1];
+const next = projects[index + 1];
+const { Content } = await render(project);
+const tools = (await Promise.all(project.data.tools.map((tool) => getEntry(tool)))).filter(Boolean);
+const gallery = project.data.gallery.map((image, imageIndex) => ({
+  src: image.src,
+  width: image.width,
+  height: image.height,
+  alt: `${project.data.title} artwork ${imageIndex + 1}`,
+}));
+---
+
+<BaseLayout title={`${project.data.title} — Najla Nuricia Laudy`} description={project.data.description} image={(project.data.ogImage ?? project.data.cover).src}>
+  <StudioRail />
+  <main id="main-content" class="pb-20 md:pb-0">
+    <section class="container pb-16 pt-16 sm:pb-20 sm:pt-24">
+      <a class="inline-flex min-h-11 items-center text-sm text-muted-foreground no-underline transition-colors hover:text-foreground" href="/#projects">← All projects</a>
+      <div class="mt-10 grid grid-cols-[1fr_.58fr] items-end gap-14 max-[800px]:grid-cols-1 max-[800px]:gap-8">
+        <div>
+          <p class="eyebrow mb-5 text-primary">Project {String(index + 1).padStart(2, "0")} · {project.data.status}</p>
+          <h1 class="m-0 max-w-4xl text-[clamp(4rem,9vw,8.5rem)] leading-[.8] tracking-[-.055em]">{project.data.title}</h1>
+        </div>
+        <div class="pb-1">
+          <p class="text-[clamp(1rem,1.55vw,1.2rem)] leading-[1.65] text-muted-foreground">{project.data.description}</p>
+          <div class="mt-6 flex flex-wrap gap-2">
+            {tools.map((tool) => <span class="pill">{tool!.data.name}</span>)}
+            <a class="pill no-underline transition-colors hover:bg-muted" href={project.data.sourceUrl} target="_blank" rel="noreferrer">View source ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="rounded-[18px] border border-white/80 bg-card p-2 shadow-lg">
+        <div class="flex items-center justify-between border-b px-3 py-2 font-mono text-[10px] text-muted-foreground">
+          <span>Cover artwork</span><span>{project.data.cover.width} × {project.data.cover.height}px</span>
+        </div>
+        <div class="mt-2 grid min-h-[62vh] place-items-center rounded-[12px] border bg-secondary/45 p-6 sm:p-10">
+          <Image class="max-h-[56vh] w-auto object-contain drop-shadow-[0_26px_22px_oklch(0.3_0.03_20/.22)] [image-rendering:pixelated]" src={project.data.cover} alt={`${project.data.title} cover artwork`} widths={[640, 960, 1400]} />
+        </div>
+      </div>
+    </section>
+
+    <section class="container grid grid-cols-[.38fr_1fr] gap-16 py-24 sm:py-28 max-[760px]:grid-cols-1 max-[760px]:gap-8">
+      <div>
+        <p class="eyebrow text-primary">Project notes</p>
+        <dl class="mt-8 grid gap-5 border-t pt-5 text-sm">
+          <div class="flex justify-between gap-4"><dt class="text-muted-foreground">Year</dt><dd>{formatYear(project.data.startDate)}</dd></div>
+          <div class="flex justify-between gap-4"><dt class="text-muted-foreground">Status</dt><dd>{project.data.status}</dd></div>
+          <div class="flex justify-between gap-4"><dt class="text-muted-foreground">Medium</dt><dd class="text-right">Pixel art</dd></div>
+          <div class="flex justify-between gap-4"><dt class="text-muted-foreground">Gallery</dt><dd>{gallery.length} images</dd></div>
+        </dl>
+      </div>
+      <article class="prose prose-lg max-w-3xl text-muted-foreground prose-headings:font-display prose-headings:font-normal prose-headings:text-foreground prose-headings:tracking-[-.025em] prose-p:leading-[1.8]"><Content /></article>
+    </section>
+
+    {gallery.length > 0 && (
+      <section class="container pb-24 sm:pb-28">
+        <div class="mb-10 flex items-end justify-between gap-6 border-t pt-10">
+          <div><p class="eyebrow mb-4 text-primary">Gallery</p><h2 class="m-0 text-[clamp(2.8rem,5vw,5rem)] leading-none tracking-[-.035em]">Inside the world.</h2></div>
+          <span class="font-mono text-[10px] text-muted-foreground">{String(gallery.length).padStart(2, "0")} images</span>
+        </div>
+        <Gallery images={gallery} client:visible />
+      </section>
+    )}
+
+    <nav class="container pb-24" aria-label="Project navigation">
+      <div class="grid grid-cols-2 gap-4 max-[620px]:grid-cols-1">
+        {previous ? (
+          <a class="group rounded-[14px] border border-white/80 bg-card p-5 no-underline shadow-sm transition-[transform,box-shadow] hover:-translate-y-1 hover:shadow-md sm:p-7" href={`/project/${previous.id}`}>
+            <span class="font-mono text-[10px] text-muted-foreground">← Previous project</span>
+            <strong class="mt-4 block font-display text-2xl font-normal tracking-[-.02em] sm:text-3xl">{previous.data.title}</strong>
+          </a>
+        ) : <span class="max-[620px]:hidden" />}
+        {next ? (
+          <a class="group rounded-[14px] border border-white/80 bg-card p-5 text-right no-underline shadow-sm transition-[transform,box-shadow] hover:-translate-y-1 hover:shadow-md sm:p-7 max-[620px]:text-left" href={`/project/${next.id}`}>
+            <span class="font-mono text-[10px] text-muted-foreground">Next project →</span>
+            <strong class="mt-4 block font-display text-2xl font-normal tracking-[-.02em] sm:text-3xl">{next.data.title}</strong>
+          </a>
+        ) : (
+          <a class="rounded-[14px] border border-white/80 bg-card p-5 text-right no-underline shadow-sm transition-[transform,box-shadow] hover:-translate-y-1 hover:shadow-md sm:p-7 max-[620px]:text-left" href="/#projects"><span class="font-mono text-[10px] text-muted-foreground">Back to portfolio</span><strong class="mt-4 block font-display text-2xl font-normal sm:text-3xl">All projects ↗</strong></a>
+        )}
+      </div>
+    </nav>
+  </main>
+</BaseLayout>

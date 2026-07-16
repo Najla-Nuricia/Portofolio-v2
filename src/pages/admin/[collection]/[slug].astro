@@ -1,0 +1,16 @@
+---
+import AuthoringApp from "../../../components/admin/AuthoringApp";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getAdminRows } from "../../../lib/admin-content";
+
+const author = Astro.request.headers.get("cf-access-authenticated-user-email") ?? "Local author";
+const { collection, slug } = Astro.params;
+const row = (await getAdminRows()).find(
+  (item) => item.collection === collection && item.slug === slug,
+);
+if (!row) return Astro.rewrite("/404");
+---
+
+<BaseLayout title={`Edit ${row.title} — Najla Portfolio`} description="Edit portfolio content" noindex>
+  <AuthoringApp row={row} author={author} client:load />
+</BaseLayout>

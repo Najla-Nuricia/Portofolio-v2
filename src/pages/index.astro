@@ -1,0 +1,114 @@
+---
+import { render } from "astro:content";
+import HeroArtwork from "../components/HeroArtwork";
+import MotionReveal from "../components/MotionReveal";
+import ProjectCollection from "../components/ProjectCollection.astro";
+import StudioRail from "../components/StudioRail.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPortfolio } from "../lib/content";
+import { formatRange } from "../lib/date";
+
+const { settings, work, projects, education } = await getPortfolio();
+const workDetails = await Promise.all(work.map(async (item) => ({ item, Content: (await render(item)).Content })));
+const educationDetails = await Promise.all(education.map(async (item) => ({ item, Content: (await render(item)).Content })));
+
+---
+
+<BaseLayout title={settings.seoTitle} description={settings.seoDescription} image={projects[0]?.data.cover.src}>
+  <StudioRail />
+  <main id="main-content" class="pb-20 md:pb-0">
+    <section class="container grid min-h-svh grid-cols-2 items-center gap-16 py-16 max-[800px]:grid-cols-1 max-[800px]:gap-10 max-[800px]:py-20">
+      <div class="max-w-2xl">
+        <div class="mb-8 flex items-center gap-3 text-xs text-muted-foreground">
+          <span class="size-2 rounded-full bg-secondary shadow-[0_0_0_4px_color-mix(in_oklab,var(--secondary)_25%,transparent)]"></span>
+          <span>{settings.eyebrow}</span>
+        </div>
+        <h1 class="m-0 text-[clamp(4rem,9vw,8.5rem)] leading-[.82] tracking-[-.055em]">
+          Najla<br /><span class="text-primary">Nuricia</span>
+        </h1>
+        <p class="mt-9 max-w-xl text-[clamp(1rem,1.7vw,1.25rem)] leading-[1.65] text-muted-foreground">{settings.bio}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a class="button" href="#projects">Explore projects <span aria-hidden="true">↓</span></a>
+          <a class="button secondary" href={`mailto:${settings.email}`}>Say hello ↗</a>
+        </div>
+      </div>
+
+      <HeroArtwork
+        client:load
+        artworks={projects.map((project) => ({
+          src: project.data.cover.src,
+          width: project.data.cover.width,
+          height: project.data.cover.height,
+          title: project.data.title,
+        }))}
+      />
+    </section>
+
+    <section id="work" class="border-y bg-card/75 py-24 shadow-[inset_0_1px_0_white,inset_0_-1px_0_white]">
+      <div class="container grid grid-cols-[.55fr_1fr] gap-16 max-[760px]:grid-cols-1 max-[760px]:gap-10">
+        <div>
+          <p class="eyebrow mb-5 text-primary">Selected experience</p>
+          <h2 class="section-title">Making worlds feel alive.</h2>
+          <p class="mt-6 max-w-sm text-sm leading-7 text-muted-foreground">Pixel art, game assets, and visual systems made to feel expressive without losing clarity.</p>
+        </div>
+        <div class="border-t border-foreground/15">
+          {workDetails.map(({ item, Content }, index) => (
+            <MotionReveal client:visible delay={index * 0.08}>
+              <article class="grid grid-cols-[2.5rem_1fr_auto] gap-x-5 gap-y-3 border-b border-foreground/15 py-7 max-[640px]:grid-cols-[2rem_1fr]">
+                <span class="pt-1 font-mono text-[11px] text-primary">0{index + 1}</span>
+                <div>
+                  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <h3 class="m-0 text-2xl tracking-[-.025em]">{item.data.role}</h3>
+                    <span class="text-sm text-muted-foreground">at {item.data.organization}</span>
+                  </div>
+                  <div class="prose mt-3 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
+                </div>
+                <time class="pt-1 font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground max-[640px]:col-start-2">{formatRange(item.data.startDate, item.data.endDate)}</time>
+              </article>
+            </MotionReveal>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="container py-28">
+      <div class="mb-14 grid grid-cols-[1fr_.5fr] items-end gap-8 max-[680px]:grid-cols-1">
+        <div><p class="eyebrow mb-5 text-primary">Selected projects</p><h2 class="section-title">Pixels with purpose.</h2></div>
+        <p class="max-w-sm text-sm leading-7 text-muted-foreground">Original assets and game worlds drawn around clarity, warmth, and a little surprise.</p>
+      </div>
+      <ProjectCollection projects={projects} />
+    </section>
+
+    {education.length > 0 && (
+      <section class="border-y bg-card/70 py-24 sm:py-28">
+        <div class="container grid grid-cols-[.38fr_1fr] gap-16 max-[760px]:grid-cols-1 max-[760px]:gap-10">
+          <div>
+            <p class="eyebrow mb-5 text-primary">Education</p>
+            <h2 class="section-title">Learning across art and code.</h2>
+          </div>
+          <div class="border-t border-foreground/15">
+            {educationDetails.map(({ item, Content }, index) => (
+              <article class="grid grid-cols-[2.5rem_1fr_auto] gap-x-5 gap-y-3 border-b border-foreground/15 py-7 max-[640px]:grid-cols-[2rem_1fr]">
+                <span class="pt-1 font-mono text-[11px] text-primary">0{index + 1}</span>
+                <div>
+                  <h3 class="m-0 text-2xl tracking-[-.025em]">{item.data.title}</h3>
+                  <p class="mt-1 text-sm text-muted-foreground">{item.data.organization}</p>
+                  <div class="prose mt-4 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
+                </div>
+                <time class="pt-1 font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground max-[640px]:col-start-2">{formatRange(item.data.startDate, item.data.endDate)}</time>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <section id="contact" class="border-t bg-card py-24">
+      <div class="container grid grid-cols-[1fr_auto] items-end gap-10 max-[700px]:grid-cols-1">
+        <div><p class="eyebrow mb-5 text-primary">Have a world in mind?</p><h2 class="m-0 max-w-4xl text-[clamp(3.2rem,8vw,7rem)] leading-[.9] tracking-[-.05em]">Let’s make it memorable.</h2></div>
+        <a class="grid size-32 place-items-center rounded-[18px] border bg-foreground text-center text-base text-background no-underline shadow-[0_20px_45px_-26px_oklch(0.3_0.04_20/.6)] transition-transform hover:-translate-y-1" href={`mailto:${settings.email}`}>Write to me ↗</a>
+      </div>
+      <div class="container mt-20 flex justify-between border-t pt-6 text-xs text-muted-foreground max-[620px]:block"><span>© {new Date().getFullYear()} {settings.name}</span><div class="flex gap-5 max-[620px]:mt-4"><a href={settings.itchUrl}>Itch.io</a><a href={settings.githubUrl}>GitHub</a><a href={settings.linkedinUrl}>LinkedIn</a></div></div>
+    </section>
+  </main>
+</BaseLayout>

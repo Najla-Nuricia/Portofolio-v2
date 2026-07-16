@@ -33,14 +33,14 @@ export default Alchemy.Stack(
     yield* Cloudflare.Access.Application("PortfolioAdmin", {
       name: "Najla Portfolio authoring area",
       type: "self_hosted",
-      domain: `${domain}/admin/*`,
+      domain: `${domain}/admin`,
       policies: [authors.policyId],
       sessionDuration: "24h",
     });
     yield* Cloudflare.Access.Application("PortfolioPublishingApi", {
       name: "Najla Portfolio publishing API",
       type: "self_hosted",
-      domain: `${domain}/api/admin/*`,
+      domain: `${domain}/api/admin`,
       policies: [authors.policyId],
       sessionDuration: "24h",
     });

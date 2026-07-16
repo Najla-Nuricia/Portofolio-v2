@@ -51,6 +51,7 @@ export default Alchemy.Stack(
       compatibility: { flags: ["nodejs_compat"] },
       domain,
       env: {
+        IMAGES: Cloudflare.Images.Images(),
         GITHUB_REPOSITORY: yield* GITHUB_REPOSITORY,
         GITHUB_TOKEN: yield* GITHUB_TOKEN,
       },

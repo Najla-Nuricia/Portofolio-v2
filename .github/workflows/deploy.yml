@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Verify Cloudflare credentials
+        run: |
+          set -eu
+          test -n "$CLOUDFLARE_API_TOKEN"
+          for endpoint in \
+            user/tokens/verify \
+            accounts/$CLOUDFLARE_ACCOUNT_ID \
+            accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain \
+            accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/alchemy-state-store/settings
+          do
+            curl --fail --silent --show-error \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              "https://api.cloudflare.com/client/v4/$endpoint" > /dev/null
+          done
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 07260ddb14ca9363767d2aee933b887f
+      - run: bun run deploy:ci
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 07260ddb14ca9363767d2aee933b887f
+          GITHUB_TOKEN: ${{ secrets.PORTFOLIO_GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: Najla-Nuricia/Portofolio-v2
+          PORTFOLIO_DOMAIN: nacia.ryuko.my.id
+          CF_ACCESS_AUTHOR_EMAILS: syahrul4w@gmail.com,najlalaudy@gmail.com

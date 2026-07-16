@@ -46,8 +46,8 @@ export default Alchemy.Stack(
     });
 
     const worker = yield* Cloudflare.Worker("Portfolio", {
-      main: "./dist/_worker.js/index.js",
-      assets: "./dist",
+      main: "./dist/server/entry.mjs",
+      assets: "./dist/client",
       compatibility: { flags: ["nodejs_compat"] },
       domain,
       env: {

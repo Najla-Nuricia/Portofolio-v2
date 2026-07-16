@@ -200,16 +200,18 @@ export default function ContentEditor(props: {
               class="mt-5 grid items-start gap-5"
               classList={{ "xl:grid-cols-2": form.state.values.collection !== "settings" }}
             >
-              <TextFieldRoot required>
+              <TextFieldRoot
+                required
+                name="content"
+                value={field().state.value}
+                onChange={field().handleChange}
+              >
                 <TextFieldLabel>MDX content</TextFieldLabel>
                 <TextArea
                   ref={(element) => (editor = element)}
-                  name="content"
                   autocomplete="off"
                   class="min-h-80 resize-y rounded-[10px] bg-muted/35 p-3 font-mono text-base leading-relaxed shadow-[inset_0_1px_3px_oklch(0.35_0.03_20/.07)] sm:min-h-120 sm:p-4 sm:text-sm"
-                  value={field().state.value}
                   spellcheck={false}
-                  onInput={(event) => field().handleChange(event.currentTarget.value)}
                 />
               </TextFieldRoot>
               <Show when={form.state.values.collection !== "settings"}>

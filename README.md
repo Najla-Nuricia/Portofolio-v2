@@ -12,13 +12,10 @@ vp check
 
 ## Deployment
 
-Pushes to `main` deploy through `.github/workflows/deploy.yml` using Alchemy and Cloudflare Workers.
+Deploy manually from a machine authenticated with the Alchemy CLI:
 
-Required GitHub Actions secrets:
+```bash
+GITHUB_TOKEN=<fine-grained-repository-token> vp run deploy
+```
 
-- `ALCHEMY_PASSWORD`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_TOKEN`
-- `PORTFOLIO_GITHUB_TOKEN` — fine-grained token with repository Contents read/write access
-
-Cloudflare Access protects `/admin/*` and `/api/admin/*` for the two configured author emails.
+`vp run deploy` builds once, then provisions the Worker and Cloudflare Access. The local Alchemy profile supplies Cloudflare authentication. Access protects `/admin/*` and `/api/admin/*` for the configured author emails.

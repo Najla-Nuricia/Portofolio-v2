@@ -12,7 +12,7 @@
     "format:check": "oxfmt --check .",
     "check": "oxfmt --check . && oxlint src astro.config.ts alchemy.run.ts && astro check",
     "deploy": "astro build && alchemy deploy",
-    "deploy:ci": "astro build && alchemy deploy --yes"
+    "deploy:ci": "astro build && alchemy deploy --stage dev_ryuko --yes"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.3",

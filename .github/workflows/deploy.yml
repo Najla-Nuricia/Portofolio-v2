@@ -22,7 +22,7 @@ jobs:
       - run: bun run deploy
         env:
           ALCHEMY_PASSWORD: ${{ secrets.ALCHEMY_PASSWORD }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: 07260ddb14ca9363767d2aee933b887f
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.PORTFOLIO_GITHUB_TOKEN }}
           GITHUB_REPOSITORY: Najla-Nuricia/Portofolio-v2

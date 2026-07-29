@@ -23,6 +23,10 @@ export default Alchemy.Stack(
   { providers: Cloudflare.providers(), state: Cloudflare.state() },
   Effect.gen(function* () {
     const domain = yield* DOMAIN;
+    const artBucket = yield* Cloudflare.R2.Bucket("PortfolioArt");
+    const database = yield* Cloudflare.D1.Database("PortfolioDatabase", {
+      migrationsDir: "./migrations",
+    });
     const authors = yield* Cloudflare.Access.Policy("PortfolioAuthors", {
       name: "Najla Portfolio authors",
       decision: "allow",
@@ -37,14 +41,6 @@ export default Alchemy.Stack(
       policies: [authors.policyId],
       sessionDuration: "24h",
     });
-    yield* Cloudflare.Access.Application("PortfolioPublishingApi", {
-      name: "Najla Portfolio publishing API",
-      type: "self_hosted",
-      domain: `${domain}/api/admin`,
-      policies: [authors.policyId],
-      sessionDuration: "24h",
-    });
-
     const worker = yield* Cloudflare.Worker("Portfolio", {
       main: "./dist/server/entry.mjs",
       assets: "./dist/client",
@@ -52,11 +48,17 @@ export default Alchemy.Stack(
       domain,
       env: {
         IMAGES: Cloudflare.Images.Images(),
+        ART_BUCKET: artBucket,
+        DATABASE: database,
         GITHUB_REPOSITORY: yield* GITHUB_REPOSITORY,
         GITHUB_TOKEN: yield* GITHUB_TOKEN,
       },
     });
 
-    return { url: worker.url };
+    return {
+      url: worker.url,
+      artBucket: artBucket.bucketName,
+      database: database.databaseName,
+    };
   }),
 );

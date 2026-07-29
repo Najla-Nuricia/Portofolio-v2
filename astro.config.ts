@@ -9,5 +9,8 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare(),
   integrations: [solid(), mdx()],
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss()],
+    optimizeDeps: { exclude: ["astro", "@astrojs/cloudflare"] },
+  },
 });

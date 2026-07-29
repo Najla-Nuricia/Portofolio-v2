@@ -35,11 +35,11 @@ jobs:
           done
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: 07260ddb14ca9363767d2aee933b887f
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - run: bun run deploy:ci
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: 07260ddb14ca9363767d2aee933b887f
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GITHUB_TOKEN: ${{ secrets.PORTFOLIO_GITHUB_TOKEN }}
           GITHUB_REPOSITORY: Najla-Nuricia/Portofolio-v2
           PORTFOLIO_DOMAIN: nacia.ryuko.my.id

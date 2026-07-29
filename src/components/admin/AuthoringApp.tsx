@@ -1,5 +1,6 @@
 import { fileToBase64 } from "@/lib/file";
 import { publish } from "@/lib/publishing";
+import { toast } from "solid-sonner";
 import { createSignal } from "solid-js";
 import AdminShell from "./AdminShell";
 import ContentEditor from "./ContentEditor";
@@ -37,7 +38,7 @@ export default function AuthoringApp(props: {
     }
   };
 
-  const publishContent = async (value: EditorValues, media: File[]) => {
+  const publishContent = async (value: EditorValues, media: File[], deletedMedia: string[]) => {
     setNotice();
     try {
       await submit({
@@ -49,15 +50,20 @@ export default function AuthoringApp(props: {
               base64: await fileToBase64(file),
             })),
           )),
+          ...deletedMedia.map((name) => ({
+            path: `src/content/${value.collection}/${value.slug}/${name}`,
+            delete: true as const,
+          })),
         ],
         message: `${props.row ? "Update" : "Create"} ${value.collection}: ${value.slug}`,
       });
-      location.href = "/admin";
+      toast.success(`${props.row ? "Updated" : "Created"} ${value.slug}`);
+      setTimeout(() => (location.href = "/admin"), 500);
     } catch (error) {
-      setNotice({
-        kind: "error",
-        text: error instanceof Error ? error.message : "Publish failed. Your edits are retained.",
-      });
+      const message =
+        error instanceof Error ? error.message : "Publish failed. Your edits are retained.";
+      toast.error(message);
+      setNotice({ kind: "error", text: message });
     }
   };
 
@@ -67,9 +73,12 @@ export default function AuthoringApp(props: {
         changes: [{ path: contentPath(value), delete: true }],
         message: `Delete ${value.collection}: ${value.slug}`,
       });
-      location.href = "/admin";
+      toast.success(`Deleted ${value.slug}`);
+      setTimeout(() => (location.href = "/admin"), 500);
     } catch (error) {
-      setNotice({ kind: "error", text: error instanceof Error ? error.message : "Delete failed." });
+      const message = error instanceof Error ? error.message : "Delete failed.";
+      toast.error(message);
+      setNotice({ kind: "error", text: message });
     }
   };
 

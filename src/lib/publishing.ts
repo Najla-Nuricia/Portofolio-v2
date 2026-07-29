@@ -13,7 +13,7 @@ export class PublishConflictError extends Error {}
 export class ContentReferencedError extends Error {}
 
 export const publish = async (body: PublishRequest) => {
-  const response = await fetch("/api/admin/publish", {
+  const response = await fetch("/admin/api/publish", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

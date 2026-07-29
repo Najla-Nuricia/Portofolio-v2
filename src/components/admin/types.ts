@@ -1,4 +1,4 @@
-export type CollectionName = "work" | "project" | "education" | "tool" | "settings";
+export type CollectionName = "work" | "project" | "art" | "education" | "tool" | "settings";
 
 export interface MediaAsset {
   name: string;
@@ -26,10 +26,11 @@ export interface EditorValues {
   content: string;
 }
 
-export const collections: CollectionName[] = ["project", "work", "education", "tool"];
+export const collections: CollectionName[] = ["project", "work", "art", "education", "tool"];
 
 export const collectionLabel: Record<CollectionName, string> = {
   project: "Project",
+  art: "Art",
   work: "Work",
   education: "Education",
   tool: "Tool",
@@ -41,6 +42,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 export const blankContent: Record<CollectionName, string> = {
   work: `---\ntitle: \norganization: \nrole: \nstartDate: ${today()}\norder: 0\npublished: false\n---\n\n`,
   project: `---\ntitle: \ndescription: \nstatus: In development\nsourceUrl: https://\ntools: []\ncover: ./cover.png\nstartDate: ${today()}\norder: 0\npublished: false\n---\n\n`,
+  art: "",
   education: `---\ntitle: \norganization: \nstartDate: ${today()}\norder: 0\npublished: false\n---\n\n`,
   tool: `---\nname: \n---\n`,
   settings: "",

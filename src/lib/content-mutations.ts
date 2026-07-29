@@ -25,11 +25,16 @@ export async function resolveContentChanges(
   request: PublishRequest,
   snapshot: RepositorySnapshot,
 ): Promise<GitChange[]> {
-  const deletion = request.changes.find((change) => "delete" in change);
+  const deletion = request.changes.find(
+    (change) =>
+      "delete" in change &&
+      (/^src\/content\/(?:project|work)\/[^/]+\/index\.mdx$/.test(change.path) ||
+        /^src\/content\/tool\/[^/]+\.md$/.test(change.path)),
+  );
   if (!deletion) return request.changes;
-  if (request.changes.length !== 1) throw new Error("Delete requests must contain one change");
+  if (request.changes.length !== 1) throw new Error("Content deletion must be published alone");
 
-  if (deletion.path.startsWith("src/content/project/")) {
+  if (/^src\/content\/project\/[^/]+\/index\.mdx$/.test(deletion.path)) {
     const prefix = deletion.path.replace(/index\.mdx$/, "");
     return snapshot.entries.flatMap((entry) =>
       entry.type === "blob" && entry.path.startsWith(prefix)
@@ -39,7 +44,7 @@ export async function resolveContentChanges(
   }
 
   const entries = await projects(snapshot);
-  if (deletion.path.startsWith("src/content/tool/")) {
+  if (/^src\/content\/tool\/[^/]+\.md$/.test(deletion.path)) {
     const slug = deletion.path.split("/").at(-1)?.replace(/\.md$/, "");
     const references = entries.filter(({ content }) => {
       const document = parseDocument(split(content).source);
@@ -53,7 +58,7 @@ export async function resolveContentChanges(
     return request.changes;
   }
 
-  if (deletion.path.startsWith("src/content/work/")) {
+  if (/^src\/content\/work\/[^/]+\/index\.mdx$/.test(deletion.path)) {
     const slug = deletion.path.split("/")[3];
     const updates = entries.flatMap(({ entry, content }) => {
       const frontmatter = split(content);

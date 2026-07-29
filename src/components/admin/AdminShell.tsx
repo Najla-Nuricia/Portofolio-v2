@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   BriefcaseBusiness,
   ExternalLink,
+  Images,
   FolderKanban,
   GraduationCap,
   Menu,
@@ -10,11 +11,13 @@ import {
   Wrench,
   X,
 } from "lucide-solid";
+import { Toaster } from "solid-sonner";
 import { createSignal, type JSX, Show } from "solid-js";
 
 const links = [
   { label: "Work", icon: BriefcaseBusiness, href: "/admin?collection=work" },
   { label: "Projects", icon: FolderKanban, href: "/admin?collection=project" },
+  { label: "Art", icon: Images, href: "/admin/art" },
   { label: "Education", icon: GraduationCap, href: "/admin?collection=education" },
   { label: "Tools", icon: Wrench, href: "/admin?collection=tool" },
 ];
@@ -23,6 +26,7 @@ export default function AdminShell(props: { author: string; children: JSX.Elemen
   const [open, setOpen] = createSignal(false);
   return (
     <div class="min-h-screen overflow-x-hidden bg-muted/65 pb-20 md:pb-0">
+      <Toaster position="top-right" richColors closeButton />
       <div class="fixed bottom-[max(.75rem,env(safe-area-inset-bottom))] left-1/2 z-40 -translate-x-1/2 md:hidden">
         <Show when={open()}>
           <div class="mb-2 flex items-center gap-1 rounded-[14px] border border-white/80 bg-card/92 p-1.5 shadow-lg backdrop-blur-xl">

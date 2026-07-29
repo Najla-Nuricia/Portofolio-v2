@@ -18,7 +18,7 @@ import {
 import { TextArea } from "@/components/ui/textarea";
 import { TextField, TextFieldLabel, TextFieldRoot } from "@/components/ui/textfield";
 import { createForm } from "@tanstack/solid-form";
-import { createSignal, onCleanup, Show } from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
 import ContentPreview from "./ContentPreview";
 import MediaDropZone from "./MediaDropZone";
 import MediaLibrary from "./MediaLibrary";
@@ -39,11 +39,14 @@ export default function ContentEditor(props: {
   pending: boolean;
   notice?: { kind: "error" | "success"; text: string };
   existingMedia: MediaAsset[];
-  onPublish: (values: EditorValues, media: File[]) => Promise<void>;
+  onPublish: (values: EditorValues, media: File[], deletedMedia: string[]) => Promise<void>;
   onDelete: (values: EditorValues) => Promise<void>;
 }) {
   const [confirmDelete, setConfirmDelete] = createSignal(false);
+  const [confirmRemoveMedia, setConfirmRemoveMedia] = createSignal<number>();
+  const [confirmDeleteExisting, setConfirmDeleteExisting] = createSignal<string>();
   const [media, setMedia] = createSignal<PendingMedia[]>([]);
+  const [deletedMedia, setDeletedMedia] = createSignal<string[]>([]);
   let editor: HTMLTextAreaElement | undefined;
   const form = createForm(() => ({
     defaultValues: props.initial,
@@ -51,8 +54,17 @@ export default function ContentEditor(props: {
       props.onPublish(
         value,
         media().map((asset) => asset.file),
+        deletedMedia(),
       ),
   }));
+
+  onMount(() => {
+    if (editor) editor.value = form.getFieldValue("content");
+  });
+  createEffect(() => {
+    const val = form.getFieldValue("content");
+    if (editor && editor.value !== val) editor.value = val;
+  });
 
   const selectMedia = (files: File[]) => {
     const existing = new Set(media().map(({ name }) => name));
@@ -74,6 +86,10 @@ export default function ContentEditor(props: {
     URL.revokeObjectURL(assets[index].url);
     assets.splice(index, 1);
     setMedia(assets);
+  };
+
+  const deleteExistingMedia = (name: string) => {
+    setDeletedMedia([...deletedMedia(), name]);
   };
 
   const insertImage = (path: string) => {
@@ -146,6 +162,10 @@ export default function ContentEditor(props: {
                     disabled={props.locked}
                     onChange={(collection) => {
                       if (!collection) return;
+                      if (collection === "art") {
+                        location.href = "/admin/art";
+                        return;
+                      }
                       field().handleChange(collection);
                       form.setFieldValue("content", blankContent[collection]);
                     }}
@@ -208,7 +228,10 @@ export default function ContentEditor(props: {
               >
                 <TextFieldLabel>MDX content</TextFieldLabel>
                 <TextArea
-                  ref={(element) => (editor = element)}
+                  ref={(element) => {
+                    editor = element;
+                    if (element) element.value = field().state.value;
+                  }}
                   autocomplete="off"
                   class="min-h-80 resize-y rounded-[10px] bg-muted/35 p-3 font-mono text-base leading-relaxed shadow-[inset_0_1px_3px_oklch(0.35_0.03_20/.07)] sm:min-h-120 sm:p-4 sm:text-sm"
                   spellcheck={false}
@@ -221,10 +244,11 @@ export default function ContentEditor(props: {
                 />
                 <div class="xl:col-span-2">
                   <MediaLibrary
-                    existing={props.existingMedia}
+                    existing={props.existingMedia.filter((a) => !deletedMedia().includes(a.name))}
                     pending={media()}
                     onInsert={insertImage}
-                    onRemove={removeMedia}
+                    onRemove={(i) => setConfirmRemoveMedia(i)}
+                    onDeleteExisting={(path) => setConfirmDeleteExisting(path)}
                   />
                 </div>
               </Show>
@@ -288,6 +312,79 @@ export default function ContentEditor(props: {
               onClick={() => void props.onDelete(form.state.values)}
             >
               {props.pending ? "Deleting…" : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={confirmRemoveMedia() !== undefined}
+        onOpenChange={(open) => !open && setConfirmRemoveMedia()}
+      >
+        <DialogContent class="w-[calc(100vw-2rem)] max-w-md rounded-[16px] border-white/80 p-4 shadow-xl sm:p-6">
+          <DialogHeader>
+            <DialogTitle>Remove image?</DialogTitle>
+            <DialogDescription>
+              This removes the image from this upload session. It won't be included when you
+              publish.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter class="gap-2">
+            <Button
+              class="min-h-11 w-full sm:w-auto"
+              variant="outline"
+              type="button"
+              onClick={() => setConfirmRemoveMedia()}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              class="min-h-11 w-full sm:w-auto"
+              type="button"
+              onClick={() => {
+                const idx = confirmRemoveMedia();
+                if (idx !== undefined) removeMedia(idx);
+                setConfirmRemoveMedia();
+              }}
+            >
+              Remove
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={confirmDeleteExisting() !== undefined}
+        onOpenChange={(open) => !open && setConfirmDeleteExisting()}
+      >
+        <DialogContent class="w-[calc(100vw-2rem)] max-w-md rounded-[16px] border-white/80 p-4 shadow-xl sm:p-6">
+          <DialogHeader>
+            <DialogTitle>Delete image?</DialogTitle>
+            <DialogDescription>
+              This permanently deletes the image from the repository on next publish.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter class="gap-2">
+            <Button
+              class="min-h-11 w-full sm:w-auto"
+              variant="outline"
+              type="button"
+              onClick={() => setConfirmDeleteExisting()}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              class="min-h-11 w-full sm:w-auto"
+              type="button"
+              onClick={() => {
+                const path = confirmDeleteExisting();
+                if (path) deleteExistingMedia(path);
+                setConfirmDeleteExisting();
+              }}
+            >
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>

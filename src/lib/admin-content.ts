@@ -45,6 +45,14 @@ export async function getAdminRows(): Promise<ContentRow[]> {
     });
 
   return [
+    {
+      collection: "art",
+      slug: "gallery",
+      title: "Art gallery",
+      status: "Published",
+      content: "",
+      media: [],
+    },
     ...ordered("work", work),
     ...ordered("project", projects),
     ...ordered("education", education),

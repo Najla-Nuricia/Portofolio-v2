@@ -8,6 +8,7 @@ export default function MediaLibrary(props: {
   pending: PendingMedia[];
   onInsert: (path: string) => void;
   onRemove: (index: number) => void;
+  onDeleteExisting?: (path: string) => void;
 }) {
   return (
     <Show when={props.existing.length || props.pending.length}>
@@ -26,27 +27,40 @@ export default function MediaLibrary(props: {
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           <For each={props.existing}>
             {(asset) => (
-              <Button
-                type="button"
-                variant="outline"
-                class="group relative h-auto min-w-0 flex-col overflow-hidden p-1.5"
-                title={`Insert ${asset.path}`}
-                onClick={() => props.onInsert(asset.path)}
-              >
-                <span class="grid aspect-square w-full place-items-center overflow-hidden rounded-[6px] bg-muted">
-                  <img
-                    class="size-full object-contain [image-rendering:pixelated]"
-                    src={asset.url}
-                    width="320"
-                    height="320"
-                    loading="lazy"
-                    alt=""
-                  />
-                </span>
-                <span class="w-full truncate px-1 py-1 text-left font-mono text-[10px] text-muted-foreground">
-                  {asset.name}
-                </span>
-              </Button>
+              <div class="relative min-w-0 rounded-[9px] border bg-card p-1.5 shadow-xs">
+                <Show when={props.onDeleteExisting}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    class="absolute right-2 top-2 z-10 size-8 bg-card/90"
+                    aria-label={`Delete ${asset.name}`}
+                    onClick={() => props.onDeleteExisting?.(asset.name)}
+                  >
+                    <X class="size-3.5" />
+                  </Button>
+                </Show>
+                <button
+                  type="button"
+                  class="block w-full text-left"
+                  title={`Insert ${asset.path}`}
+                  onClick={() => props.onInsert(asset.path)}
+                >
+                  <span class="grid aspect-square w-full place-items-center overflow-hidden rounded-[6px] bg-muted">
+                    <img
+                      class="size-full object-contain [image-rendering:pixelated]"
+                      src={asset.url}
+                      width="320"
+                      height="320"
+                      loading="lazy"
+                      alt=""
+                    />
+                  </span>
+                  <span class="mt-1 w-full truncate px-1 py-1 text-left font-mono text-[10px] text-muted-foreground">
+                    {asset.name}
+                  </span>
+                </button>
+              </div>
             )}
           </For>
           <For each={props.pending}>

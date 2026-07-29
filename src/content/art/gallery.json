@@ -1,0 +1,330 @@
+[
+  {
+    "id": "art-01",
+    "name": "Artwork 01",
+    "image": "art-01.webp",
+    "order": 0,
+    "featured": true,
+    "hidden": false
+  },
+  {
+    "id": "art-02",
+    "name": "Artwork 02",
+    "image": "art-02.webp",
+    "order": 1,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-03",
+    "name": "Artwork 03",
+    "image": "art-03.webp",
+    "order": 2,
+    "featured": true,
+    "hidden": false
+  },
+  {
+    "id": "art-04",
+    "name": "Artwork 04",
+    "image": "art-04.webp",
+    "order": 3,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-05",
+    "name": "Artwork 05",
+    "image": "art-05.webp",
+    "order": 4,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-06",
+    "name": "Artwork 06",
+    "image": "art-06.webp",
+    "order": 5,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-07",
+    "name": "Artwork 07",
+    "image": "art-07.webp",
+    "order": 6,
+    "featured": true,
+    "hidden": false
+  },
+  {
+    "id": "art-08",
+    "name": "Artwork 08",
+    "image": "art-08.webp",
+    "order": 7,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-09",
+    "name": "Artwork 09",
+    "image": "art-09.webp",
+    "order": 8,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-10",
+    "name": "Artwork 10",
+    "image": "art-10.webp",
+    "order": 9,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-11",
+    "name": "Artwork 11",
+    "image": "art-11.webp",
+    "order": 10,
+    "featured": true,
+    "hidden": false
+  },
+  {
+    "id": "art-12",
+    "name": "Artwork 12",
+    "image": "art-12.webp",
+    "order": 11,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-13",
+    "name": "Artwork 13",
+    "image": "art-13.webp",
+    "order": 12,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-14",
+    "name": "Artwork 14",
+    "image": "art-14.webp",
+    "order": 13,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-15",
+    "name": "Artwork 15",
+    "image": "art-15.webp",
+    "order": 14,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-16",
+    "name": "Artwork 16",
+    "image": "art-16.webp",
+    "order": 15,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-17",
+    "name": "Artwork 17",
+    "image": "art-17.webp",
+    "order": 16,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-18",
+    "name": "Artwork 18",
+    "image": "art-18.webp",
+    "order": 17,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-19",
+    "name": "Artwork 19",
+    "image": "art-19.webp",
+    "order": 18,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-20",
+    "name": "Artwork 20",
+    "image": "art-20.webp",
+    "order": 19,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-21",
+    "name": "Artwork 21",
+    "image": "art-21.webp",
+    "order": 20,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-22",
+    "name": "Artwork 22",
+    "image": "art-22.webp",
+    "order": 21,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-23",
+    "name": "Artwork 23",
+    "image": "art-23.webp",
+    "order": 22,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-24",
+    "name": "Artwork 24",
+    "image": "art-24.webp",
+    "order": 23,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-25",
+    "name": "Artwork 25",
+    "image": "art-25.webp",
+    "order": 24,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-26",
+    "name": "Artwork 26",
+    "image": "art-26.webp",
+    "order": 25,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-27",
+    "name": "Artwork 27",
+    "image": "art-27.webp",
+    "order": 26,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-28",
+    "name": "Artwork 28",
+    "image": "art-28.webp",
+    "order": 27,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-29",
+    "name": "Artwork 29",
+    "image": "art-29.webp",
+    "order": 28,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-30",
+    "name": "Artwork 30",
+    "image": "art-30.webp",
+    "order": 29,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-31",
+    "name": "Artwork 31",
+    "image": "art-31.webp",
+    "order": 30,
+    "featured": true,
+    "hidden": false
+  },
+  {
+    "id": "art-32",
+    "name": "Artwork 32",
+    "image": "art-32.webp",
+    "order": 31,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-33",
+    "name": "Artwork 33",
+    "image": "art-33.webp",
+    "order": 32,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-34",
+    "name": "Artwork 34",
+    "image": "art-34.webp",
+    "order": 33,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-35",
+    "name": "Artwork 35",
+    "image": "art-35.webp",
+    "order": 34,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-36",
+    "name": "Artwork 36",
+    "image": "art-36.webp",
+    "order": 35,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-37",
+    "name": "Artwork 37",
+    "image": "art-37.webp",
+    "order": 36,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-38",
+    "name": "Artwork 38",
+    "image": "art-38.webp",
+    "order": 37,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-39",
+    "name": "Artwork 39",
+    "image": "art-39.webp",
+    "order": 38,
+    "featured": false,
+    "hidden": false
+  },
+  {
+    "id": "art-40",
+    "name": "Artwork 40",
+    "image": "art-40.webp",
+    "order": 39,
+    "featured": true,
+    "hidden": false
+  },
+  {
+    "id": "art-41",
+    "name": "Artwork 41",
+    "image": "art-41.webp",
+    "order": 40,
+    "featured": false,
+    "hidden": false
+  }
+]

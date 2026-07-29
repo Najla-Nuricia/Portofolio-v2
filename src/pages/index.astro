@@ -1,14 +1,21 @@
 ---
 import { render } from "astro:content";
+import ArtGallery from "../components/ArtGallery";
+import { listArt } from "../lib/database/art";
 import HeroArtwork from "../components/HeroArtwork";
 import MotionReveal from "../components/MotionReveal";
 import ProjectCollection from "../components/ProjectCollection.astro";
 import StudioRail from "../components/StudioRail.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { artUrl } from "../lib/art";
 import { getPortfolio } from "../lib/content";
 import { formatRange } from "../lib/date";
 
 const { settings, work, projects, education } = await getPortfolio();
+const art = (await listArt()).filter((item) => !item.hidden).map((item) => ({
+  ...item,
+  src: artUrl(item.image),
+}));
 const workDetails = await Promise.all(work.map(async (item) => ({ item, Content: (await render(item)).Content })));
 const educationDetails = await Promise.all(education.map(async (item) => ({ item, Content: (await render(item)).Content })));
 
@@ -44,29 +51,74 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
       />
     </section>
 
-    <section id="work" class="border-y bg-card/75 py-24 shadow-[inset_0_1px_0_white,inset_0_-1px_0_white]">
-      <div class="container grid grid-cols-[.55fr_1fr] gap-16 max-[760px]:grid-cols-1 max-[760px]:gap-10">
-        <div>
-          <p class="eyebrow mb-5 text-primary">Selected experience</p>
-          <h2 class="section-title">Making worlds feel alive.</h2>
-          <p class="mt-6 max-w-sm text-sm leading-7 text-muted-foreground">Pixel art, game assets, and visual systems made to feel expressive without losing clarity.</p>
-        </div>
-        <div class="border-t border-foreground/15">
-          {workDetails.map(({ item, Content }, index) => (
-            <MotionReveal client:visible delay={index * 0.08}>
-              <article class="grid grid-cols-[2.5rem_1fr_auto] gap-x-5 gap-y-3 border-b border-foreground/15 py-7 max-[640px]:grid-cols-[2rem_1fr]">
-                <span class="pt-1 font-mono text-[11px] text-primary">0{index + 1}</span>
-                <div>
-                  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <h3 class="m-0 text-2xl tracking-[-.025em]">{item.data.role}</h3>
-                    <span class="text-sm text-muted-foreground">at {item.data.organization}</span>
-                  </div>
-                  <div class="prose mt-3 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
+    <section id="work" class="border-y bg-card/75 py-20 shadow-[inset_0_1px_0_white,inset_0_-1px_0_white] sm:py-24">
+      <div class="container">
+        <div class="grid grid-cols-[minmax(15rem,.48fr)_1fr] gap-12 max-[800px]:grid-cols-1 max-[800px]:gap-10 lg:gap-20">
+          <header class="self-start max-[800px]:max-w-xl min-[801px]:sticky min-[801px]:top-16">
+            <p class="eyebrow mb-5 text-primary">Experience & education</p>
+            <h2 class="m-0 max-w-lg text-[clamp(3.2rem,6.5vw,6.8rem)] leading-[.86] tracking-[-.045em]">
+              Drawn to build.
+            </h2>
+            <p class="mt-7 max-w-sm text-sm leading-7 text-muted-foreground">
+              A working practice shaped by game production, independent art, and computer science.
+            </p>
+          </header>
+
+          <div class="space-y-14">
+            <div>
+              <div class="mb-3 flex items-center justify-between border-b border-foreground/20 pb-3">
+                <h3 class="m-0 text-lg tracking-[-.02em]">Selected experience</h3>
+                <span class="font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground">{work.length} roles</span>
+              </div>
+              <div>
+                {workDetails.map(({ item, Content }, index) => (
+                  <MotionReveal client:visible delay={index * 0.08}>
+                    <article class="group grid grid-cols-[2.25rem_1fr] gap-x-4 border-b border-foreground/15 py-7 sm:grid-cols-[2.25rem_1fr_auto] sm:gap-x-6">
+                      <span class="pt-1 font-mono text-[10px] text-primary">0{index + 1}</span>
+                      <div>
+                        <p class="mb-2 text-xs text-primary">{item.data.organization}</p>
+                        <h4 class="m-0 text-[clamp(1.6rem,3vw,2.4rem)] leading-none tracking-[-.035em] transition-transform duration-300 group-hover:translate-x-1">
+                          {item.data.role}
+                        </h4>
+                        <div class="prose mt-4 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
+                      </div>
+                      <time class="col-start-2 mt-4 whitespace-nowrap font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground sm:col-start-3 sm:row-start-1 sm:mt-1">
+                        {formatRange(item.data.startDate, item.data.endDate)}
+                      </time>
+                    </article>
+                  </MotionReveal>
+                ))}
+              </div>
+            </div>
+
+            {education.length > 0 && (
+              <div>
+                <div class="mb-3 flex items-center justify-between border-b border-foreground/20 pb-3">
+                  <h3 class="m-0 text-lg tracking-[-.02em]">Education</h3>
+                  <span class="font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground">Formal study</span>
                 </div>
-                <time class="pt-1 font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground max-[640px]:col-start-2">{formatRange(item.data.startDate, item.data.endDate)}</time>
-              </article>
-            </MotionReveal>
-          ))}
+                <div>
+                  {educationDetails.map(({ item, Content }, index) => (
+                    <MotionReveal client:visible delay={index * 0.08}>
+                      <article class="group grid grid-cols-[2.25rem_1fr] gap-x-4 border-b border-foreground/15 py-7 sm:grid-cols-[2.25rem_1fr_auto] sm:gap-x-6">
+                        <span class="pt-1 font-mono text-[10px] text-primary">0{index + 1}</span>
+                        <div>
+                          <p class="mb-2 text-xs text-primary">{item.data.organization}</p>
+                          <h4 class="m-0 text-[clamp(1.6rem,3vw,2.4rem)] leading-none tracking-[-.035em] transition-transform duration-300 group-hover:translate-x-1">
+                            {item.data.title}
+                          </h4>
+                          <div class="prose mt-4 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
+                        </div>
+                        <time class="col-start-2 mt-4 whitespace-nowrap font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground sm:col-start-3 sm:row-start-1 sm:mt-1">
+                          {formatRange(item.data.startDate, item.data.endDate)}
+                        </time>
+                      </article>
+                    </MotionReveal>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
@@ -79,36 +131,51 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
       <ProjectCollection projects={projects} />
     </section>
 
-    {education.length > 0 && (
-      <section class="border-y bg-card/70 py-24 sm:py-28">
-        <div class="container grid grid-cols-[.38fr_1fr] gap-16 max-[760px]:grid-cols-1 max-[760px]:gap-10">
-          <div>
-            <p class="eyebrow mb-5 text-primary">Education</p>
-            <h2 class="section-title">Learning across art and code.</h2>
+    {art.length > 0 && (
+      <section id="art" class="border-y bg-card/70 py-24 sm:py-28">
+        <div class="container">
+          <div class="mb-12 grid grid-cols-[1fr_.5fr] items-end gap-8 max-[680px]:grid-cols-1">
+            <div>
+              <p class="eyebrow mb-5 text-primary">Art archive</p>
+              <h2 class="section-title">Loose pixels, finished thoughts.</h2>
+            </div>
+            <p class="max-w-sm text-sm leading-7 text-muted-foreground">
+              Illustrations, studies, experiments, and small worlds collected outside the project
+              brief.
+            </p>
           </div>
-          <div class="border-t border-foreground/15">
-            {educationDetails.map(({ item, Content }, index) => (
-              <article class="grid grid-cols-[2.5rem_1fr_auto] gap-x-5 gap-y-3 border-b border-foreground/15 py-7 max-[640px]:grid-cols-[2rem_1fr]">
-                <span class="pt-1 font-mono text-[11px] text-primary">0{index + 1}</span>
-                <div>
-                  <h3 class="m-0 text-2xl tracking-[-.025em]">{item.data.title}</h3>
-                  <p class="mt-1 text-sm text-muted-foreground">{item.data.organization}</p>
-                  <div class="prose mt-4 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
-                </div>
-                <time class="pt-1 font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground max-[640px]:col-start-2">{formatRange(item.data.startDate, item.data.endDate)}</time>
-              </article>
-            ))}
-          </div>
+          <ArtGallery art={art} client:visible />
         </div>
       </section>
     )}
 
-    <section id="contact" class="border-t bg-card py-24">
-      <div class="container grid grid-cols-[1fr_auto] items-end gap-10 max-[700px]:grid-cols-1">
-        <div><p class="eyebrow mb-5 text-primary">Have a world in mind?</p><h2 class="m-0 max-w-4xl text-[clamp(3.2rem,8vw,7rem)] leading-[.9] tracking-[-.05em]">Let’s make it memorable.</h2></div>
-        <a class="grid size-32 place-items-center rounded-[18px] border bg-foreground text-center text-base text-background no-underline shadow-[0_20px_45px_-26px_oklch(0.3_0.04_20/.6)] transition-transform hover:-translate-y-1" href={`mailto:${settings.email}`}>Write to me ↗</a>
+    <footer id="contact" class="border-t bg-card">
+      <div class="container py-16 sm:py-20">
+        <div class="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-10 max-[700px]:grid-cols-1 max-[700px]:gap-8">
+          <div>
+            <p class="eyebrow mb-4 text-primary">Available for selected projects</p>
+            <h2 class="m-0 max-w-3xl text-[clamp(2.5rem,6vw,5.25rem)] leading-[.94] tracking-[-.04em]">
+              Let’s build something worth playing.
+            </h2>
+          </div>
+          <a
+            class="group inline-flex min-h-12 items-center justify-between gap-8 border-b border-foreground pb-2 text-base no-underline transition-colors hover:border-primary hover:text-primary max-[700px]:w-full"
+            href={`mailto:${settings.email}`}
+          >
+            <span>{settings.email}</span>
+            <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">↗</span>
+          </a>
+        </div>
+
+        <div class="mt-14 grid grid-cols-[1fr_auto] items-center gap-6 border-t pt-5 text-xs text-muted-foreground max-[620px]:grid-cols-1 max-[620px]:gap-4">
+          <span>© {new Date().getFullYear()} {settings.name}</span>
+          <nav aria-label="Social links" class="flex flex-wrap gap-x-6 gap-y-3">
+            <a class="hover:text-foreground" href={settings.itchUrl}>Itch.io</a>
+            <a class="hover:text-foreground" href={settings.githubUrl}>GitHub</a>
+            <a class="hover:text-foreground" href={settings.linkedinUrl}>LinkedIn</a>
+          </nav>
+        </div>
       </div>
-      <div class="container mt-20 flex justify-between border-t pt-6 text-xs text-muted-foreground max-[620px]:block"><span>© {new Date().getFullYear()} {settings.name}</span><div class="flex gap-5 max-[620px]:mt-4"><a href={settings.itchUrl}>Itch.io</a><a href={settings.githubUrl}>GitHub</a><a href={settings.linkedinUrl}>LinkedIn</a></div></div>
-    </section>
+    </footer>
   </main>
 </BaseLayout>

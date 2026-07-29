@@ -1,0 +1,16 @@
+---
+import ArtManager from "../../components/admin/ArtManager";
+import { listArt } from "../../lib/database/art";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { artUrl } from "../../lib/art";
+
+const author = Astro.request.headers.get("cf-access-authenticated-user-email") ?? "Local author";
+const initial = (await listArt()).map((item) => ({
+  ...item,
+  url: artUrl(item.image),
+}));
+---
+
+<BaseLayout title="Art gallery — Najla Portfolio" description="Manage portfolio art" noindex>
+  <ArtManager initial={initial} author={author} client:only="solid-js" />
+</BaseLayout>

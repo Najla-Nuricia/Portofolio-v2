@@ -57,7 +57,10 @@ export async function validateContentChanges(
           if (missingMedia) throw new Error(`Missing image: ${missingMedia}`);
           const missingTool = data.tools.find((tool) => !paths.has(`src/content/tool/${tool}.md`));
           if (missingTool) throw new Error(`Unknown tool: ${missingTool}`);
-          if (data.work && !paths.has(`src/content/work/${data.work}/index.mdx`))
+          if (
+            data.work &&
+            !paths.has(`src/content/work/${data.work.replace(/\/index$/, "")}/index.mdx`)
+          )
             throw new Error(`Unknown work: ${data.work}`);
         }
 

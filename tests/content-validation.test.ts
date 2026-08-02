@@ -83,4 +83,18 @@ Kuda
       ]),
     ).resolves.toHaveLength(2);
   });
+
+  it("accepts Astro work entry ids", async () => {
+    await expect(
+      validate(
+        [
+          {
+            path: "src/content/project/kuda/index.mdx",
+            content: project("work: itch-assets-creator/index\n"),
+          },
+        ],
+        ["src/content/project/kuda/cover.png", "src/content/work/itch-assets-creator/index.mdx"],
+      ),
+    ).resolves.toHaveLength(1);
+  });
 });

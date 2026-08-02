@@ -33,14 +33,14 @@ export default function ContentPreview(props: { source: string; media: MediaAsse
   });
 
   return (
-    <section class="min-h-80 overflow-hidden rounded-[12px] border bg-card shadow-[inset_0_1px_0_white] sm:min-h-120">
+    <section class="flex h-80 flex-col overflow-hidden rounded-[12px] border bg-card shadow-[inset_0_1px_0_white] sm:h-120">
       <header class="flex items-center justify-between border-b bg-muted/40 px-4 py-3">
         <span class="font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground">
           Markdown preview
         </span>
         <span class="size-2 rounded-full bg-secondary" />
       </header>
-      <div class="p-5 sm:p-7">
+      <div class="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
         <Show when={error()}>
           <p class="mb-5 rounded-[8px] border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
             {error()}

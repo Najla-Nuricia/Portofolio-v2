@@ -73,7 +73,8 @@ function ArtManagerContent(props: { initial: AdminArtItem[]; author: string }) {
         },
       ];
     });
-    setItems([...items(), ...additions]);
+    for (const item of additions) names.setFieldValue(item.id, item.name);
+    setItems([...additions, ...items()]);
     setChanged((ids) => new Set([...ids, ...additions.map((item) => item.id)]));
   };
 

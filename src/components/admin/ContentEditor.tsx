@@ -217,10 +217,11 @@ export default function ContentEditor(props: {
         <form.Field name="content">
           {(field) => (
             <div
-              class="mt-5 grid items-start gap-5"
+              class="mt-5 grid gap-5"
               classList={{ "xl:grid-cols-2": form.state.values.collection !== "settings" }}
             >
               <TextFieldRoot
+                class="flex h-80 flex-col sm:h-120"
                 required
                 name="content"
                 value={field().state.value}
@@ -233,7 +234,7 @@ export default function ContentEditor(props: {
                     if (element) element.value = field().state.value;
                   }}
                   autocomplete="off"
-                  class="min-h-80 resize-y rounded-[10px] bg-muted/35 p-3 font-mono text-base leading-relaxed shadow-[inset_0_1px_3px_oklch(0.35_0.03_20/.07)] sm:min-h-120 sm:p-4 sm:text-sm"
+                  class="min-h-0 flex-1 resize-none rounded-[10px] bg-muted/35 p-3 font-mono text-base leading-relaxed shadow-[inset_0_1px_3px_oklch(0.35_0.03_20/.07)] sm:p-4 sm:text-sm"
                   spellcheck={false}
                 />
               </TextFieldRoot>

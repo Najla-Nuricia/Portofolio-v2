@@ -44,16 +44,16 @@ export default function AuthoringApp(props: {
       await submit({
         changes: [
           { path: contentPath(value), content: value.content },
+          ...deletedMedia.map((name) => ({
+            path: `src/content/${value.collection}/${value.slug}/${name}`,
+            delete: true as const,
+          })),
           ...(await Promise.all(
             media.map(async (file) => ({
               path: `src/content/${value.collection}/${value.slug}/${mediaName(file.name)}`,
               base64: await fileToBase64(file),
             })),
           )),
-          ...deletedMedia.map((name) => ({
-            path: `src/content/${value.collection}/${value.slug}/${name}`,
-            delete: true as const,
-          })),
         ],
         message: `${props.row ? "Update" : "Create"} ${value.collection}: ${value.slug}`,
       });

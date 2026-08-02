@@ -67,11 +67,11 @@ export default function ContentEditor(props: {
   });
 
   const selectMedia = (files: File[]) => {
-    const existing = new Set(media().map(({ name }) => name));
+    const existing = new Set(media().map(({ name }) => mediaPath(name)));
     setMedia([
       ...media(),
       ...files
-        .filter((file) => file.type.startsWith("image/") && !existing.has(file.name))
+        .filter((file) => file.type.startsWith("image/") && !existing.has(mediaPath(file.name)))
         .map((file) => ({
           file,
           name: file.name,

@@ -31,14 +31,29 @@ const decode = (content: string) =>
     Uint8Array.from(atob(content.replace(/\n/g, "")), (character) => character.charCodeAt(0)),
   );
 
+export class GitHubApiError extends Error {
+  constructor(
+    readonly status: number,
+    readonly operation: string,
+    detail: string,
+  ) {
+    super(`${operation} failed (${status}): ${detail}`);
+  }
+}
+
 const github = (repository: string, token: string) => {
   const api = `https://api.github.com/repos/${repository}`;
   const request = async <T>(path: string, init?: RequestInit) => {
     const response = await fetch(`${api}${path}`, { ...init, headers: headers(token) });
-    if (!response.ok) throw new Error(`${response.status}:${await response.text()}`);
+    if (!response.ok)
+      throw new GitHubApiError(
+        response.status,
+        `${init?.method ?? "GET"} ${path}`,
+        await response.text(),
+      );
     return response.json() as Promise<T>;
   };
-  return { api, request };
+  return { request };
 };
 
 export async function getRepositorySnapshot(repository: string, token: string) {
@@ -68,9 +83,12 @@ export async function commitChanges(options: {
 }) {
   const { repository, token, author, request: publishRequest } = options;
   const snapshot = options.snapshot ?? (await getRepositorySnapshot(repository, token));
-  const { api, request } = github(repository, token);
+  const { request } = github(repository, token);
+  const changes = [
+    ...new Map(publishRequest.changes.map((change) => [change.path, change])).values(),
+  ];
   const tree = await Promise.all(
-    publishRequest.changes.map(async (change) => {
+    changes.map(async (change) => {
       if ("delete" in change) return { path: change.path, mode: "100644", type: "blob", sha: null };
       const blob = await request<{ sha: string }>("/git/blobs", {
         method: "POST",
@@ -98,12 +116,14 @@ export async function commitChanges(options: {
       },
     }),
   });
-  const update = await fetch(`${api}/git/refs/heads/${snapshot.branch}`, {
-    method: "PATCH",
-    headers: headers(token),
-    body: JSON.stringify({ sha: nextCommit.sha, force: false }),
-  });
-  if (update.status === 409 || update.status === 422) throw new PublishConflictError();
-  if (!update.ok) throw new Error(`${update.status}:${await update.text()}`);
+  try {
+    await request(`/git/refs/heads/${snapshot.branch}`, {
+      method: "PATCH",
+      body: JSON.stringify({ sha: nextCommit.sha, force: false }),
+    });
+  } catch (error) {
+    if (error instanceof GitHubApiError && error.status === 409) throw new PublishConflictError();
+    throw error;
+  }
   return nextCommit.sha;
 }

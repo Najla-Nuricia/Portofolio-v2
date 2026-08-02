@@ -2,7 +2,7 @@ import { publishRequestSchema } from "../../../../schema/api";
 import { ApiError, attempt, json } from "@/lib/api";
 import { resolveContentChanges } from "@/lib/content-mutations";
 import { InvalidContentError, validateContentChanges } from "@/lib/content-validation";
-import { commitChanges, getRepositorySnapshot } from "@/lib/github";
+import { commitChanges, getRepositorySnapshot, GitHubApiError } from "@/lib/github";
 import {
   ContentReferencedError,
   PublishConflictError,
@@ -30,9 +30,11 @@ const publishError = (error: unknown) =>
       Match.instanceOf(ContentReferencedError),
       (failure) => new ApiError({ message: failure.message, status: 422 }),
     ),
-    Match.orElse(
-      () => new ApiError({ message: "GitHub rejected the publishing commit", status: 502 }),
+    Match.when(
+      Match.instanceOf(GitHubApiError),
+      (failure) => new ApiError({ message: failure.message, status: 502 }),
     ),
+    Match.orElse(() => new ApiError({ message: "Publishing failed", status: 502 })),
   );
 
 export const POST: APIRoute = ({ request }) =>

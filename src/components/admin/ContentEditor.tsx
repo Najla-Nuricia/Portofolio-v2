@@ -195,7 +195,7 @@ export default function ContentEditor(props: {
                     name="slug"
                     autocomplete="off"
                     value={field().state.value}
-                    pattern="[a-z0-9-]+"
+                    pattern={"[a-z0-9\\-]+"}
                     onInput={(event) =>
                       field().handleChange(
                         event.currentTarget.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),

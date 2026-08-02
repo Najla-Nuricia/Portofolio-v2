@@ -189,7 +189,7 @@ export default function ContentEditor(props: {
             <form.Field name="slug">
               {(field) => (
                 <TextFieldRoot required disabled={props.locked}>
-                  <TextFieldLabel>Slug</TextFieldLabel>
+                  <TextFieldLabel>Name</TextFieldLabel>
                   <TextField
                     class="h-12"
                     name="slug"

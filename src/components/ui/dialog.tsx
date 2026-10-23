@@ -39,7 +39,10 @@ export const DialogContent = <T extends ValidComponent = "div">(
         {...rest}
       >
         {local.children}
-        <DialogPrimitive.CloseButton class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-[opacity,box-shadow] hover:opacity-100 focus-visible:outline-none focus-visible:ring-[1.5px] focus-visible:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+        <DialogPrimitive.CloseButton
+          aria-label="Close dialog"
+          class="absolute right-3 top-3 z-[60] grid size-11 place-items-center rounded-full border border-border/80 bg-background/95 text-foreground opacity-100 shadow-md backdrop-blur-sm ring-offset-background transition-[transform,background-color,box-shadow] duration-200 hover:scale-105 hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-95 disabled:pointer-events-none"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4">
             <path
               fill="none"

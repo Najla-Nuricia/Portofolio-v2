@@ -25,7 +25,7 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
   <StudioRail />
   <main id="main-content" class="pb-20 md:pb-0">
     <section class="container grid min-h-svh grid-cols-2 items-center gap-16 py-16 max-[800px]:grid-cols-1 max-[800px]:gap-10 max-[800px]:py-20">
-      <div class="max-w-2xl">
+      <MotionReveal client:load class="max-w-2xl">
         <div class="mb-8 flex items-center gap-3 text-xs text-muted-foreground">
           <span class="size-2 rounded-full bg-secondary shadow-[0_0_0_4px_color-mix(in_oklab,var(--secondary)_25%,transparent)]"></span>
           <span>{settings.eyebrow}</span>
@@ -38,7 +38,7 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
           <a class="button" href="#projects">Explore projects <span aria-hidden="true">↓</span></a>
           <a class="button secondary" href={`mailto:${settings.email}`}>Say hello ↗</a>
         </div>
-      </div>
+      </MotionReveal>
 
       <HeroArtwork
         client:load
@@ -124,17 +124,17 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
     </section>
 
     <section id="projects" class="container py-28">
-      <div class="mb-14 grid grid-cols-[1fr_.5fr] items-end gap-8 max-[680px]:grid-cols-1">
+      <MotionReveal client:visible class="mb-14 grid grid-cols-[1fr_.5fr] items-end gap-8 max-[680px]:grid-cols-1">
         <div><p class="eyebrow mb-5 text-primary">Selected projects</p><h2 class="section-title">Pixels with purpose.</h2></div>
         <p class="max-w-sm text-sm leading-7 text-muted-foreground">Original assets and game worlds drawn around clarity, warmth, and a little surprise.</p>
-      </div>
+      </MotionReveal>
       <ProjectCollection projects={projects} />
     </section>
 
     {art.length > 0 && (
       <section id="art" class="border-y bg-card/70 py-24 sm:py-28">
         <div class="container">
-          <div class="mb-12 grid grid-cols-[1fr_.5fr] items-end gap-8 max-[680px]:grid-cols-1">
+          <MotionReveal client:visible class="mb-12 grid grid-cols-[1fr_.5fr] items-end gap-8 max-[680px]:grid-cols-1">
             <div>
               <p class="eyebrow mb-5 text-primary">Art archive</p>
               <h2 class="section-title">Loose pixels, finished thoughts.</h2>
@@ -143,7 +143,7 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
               Illustrations, studies, experiments, and small worlds collected outside the project
               brief.
             </p>
-          </div>
+          </MotionReveal>
           <ArtGallery art={art} client:visible />
         </div>
       </section>
@@ -152,12 +152,12 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
     <footer id="contact" class="border-t bg-card">
       <div class="container py-16 sm:py-20">
         <div class="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-10 max-[700px]:grid-cols-1 max-[700px]:gap-8">
-          <div>
+          <MotionReveal client:visible>
             <p class="eyebrow mb-4 text-primary">Available for selected projects</p>
             <h2 class="m-0 max-w-3xl text-[clamp(2.5rem,6vw,5.25rem)] leading-[.94] tracking-[-.04em]">
               Let’s build something worth playing.
             </h2>
-          </div>
+          </MotionReveal>
           <a
             class="group inline-flex min-h-12 items-center justify-between gap-8 border-b border-foreground pb-2 text-base no-underline transition-colors hover:border-primary hover:text-primary max-[700px]:w-full"
             href={`mailto:${settings.email}`}

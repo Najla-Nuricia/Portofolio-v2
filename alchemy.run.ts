@@ -3,12 +3,12 @@ import * as Cloudflare from "alchemy/Cloudflare";
 import * as Config from "effect/Config";
 import * as Effect from "effect/Effect";
 
-const DOMAIN = Config.string("PORTFOLIO_DOMAIN").pipe(Config.withDefault("nacia.ryuko.my.id"));
-const GITHUB_REPOSITORY = Config.string("GITHUB_REPOSITORY").pipe(
+const DOMAIN = Config.String("PORTFOLIO_DOMAIN").pipe(Config.withDefault("nacia.ryuko.my.id"));
+const GITHUB_REPOSITORY = Config.String("GITHUB_REPOSITORY").pipe(
   Config.withDefault("Najla-Nuricia/Portofolio-v2"),
 );
-const GITHUB_TOKEN = Config.redacted("GITHUB_TOKEN");
-const AUTHOR_EMAILS = Config.string("CF_ACCESS_AUTHOR_EMAILS").pipe(
+const GITHUB_TOKEN = Config.Redacted("GITHUB_TOKEN");
+const AUTHOR_EMAILS = Config.String("CF_ACCESS_AUTHOR_EMAILS").pipe(
   Config.withDefault("syahrul4w@gmail.com,najlalaudy@gmail.com"),
   Config.map((emails) =>
     emails
@@ -25,7 +25,7 @@ export default Alchemy.Stack(
     const domain = yield* DOMAIN;
     const artBucket = yield* Cloudflare.R2.Bucket("PortfolioArt");
     const database = yield* Cloudflare.D1.Database("PortfolioDatabase", {
-      migrationsDir: "./migrations",
+      migrations: "./migrations",
     });
     const authors = yield* Cloudflare.Access.Policy("PortfolioAuthors", {
       name: "Najla Portfolio authors",

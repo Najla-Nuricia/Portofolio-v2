@@ -8,20 +8,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TextField, TextFieldLabel, TextFieldRoot } from "@/components/ui/textfield";
-import {
-  createColumnHelper,
-  createSolidTable,
-  flexRender,
-  getCoreRowModel,
-} from "@tanstack/solid-table";
+import { createColumnHelper, createTable, tableFeatures } from "@tanstack/solid-table";
 import { ArrowRight, Search } from "lucide-solid";
 import { createMemo, For, Show } from "solid-js";
 import type { ContentRow } from "./types";
 
 const editHref = (row: ContentRow) =>
   row.collection === "art" ? "/admin/art" : `/admin/${row.collection}/${row.slug}`;
-const column = createColumnHelper<ContentRow>();
-const columns = [
+const features = tableFeatures({});
+const column = createColumnHelper<typeof features, ContentRow>();
+const columns = column.columns([
   column.accessor("title", { header: "Title" }),
   column.accessor("collection", { header: "Collection" }),
   column.accessor("status", { header: "Status" }),
@@ -41,7 +37,7 @@ const columns = [
       </Button>
     ),
   }),
-];
+]);
 
 export default function ContentTable(props: {
   rows: ContentRow[];
@@ -57,12 +53,12 @@ export default function ContentTable(props: {
         .includes(query),
     );
   });
-  const table = createSolidTable({
+  const table = createTable({
+    features,
     get data() {
       return rows();
     },
     columns,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   return (
@@ -113,7 +109,7 @@ export default function ContentTable(props: {
                           class="whitespace-nowrap px-4 last:w-24 last:text-right lg:px-5"
                           scope="col"
                         >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <table.FlexRender header={header} />
                         </TableHead>
                       )}
                     </For>
@@ -125,10 +121,10 @@ export default function ContentTable(props: {
               <For each={table.getRowModel().rows}>
                 {(row) => (
                   <TableRow>
-                    <For each={row.getVisibleCells()}>
+                    <For each={row.getAllCells()}>
                       {(cell) => (
                         <TableCell class="px-4 py-3 first:font-medium last:text-right lg:px-5">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          <table.FlexRender cell={cell} />
                         </TableCell>
                       )}
                     </For>

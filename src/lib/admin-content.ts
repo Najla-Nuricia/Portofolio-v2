@@ -18,7 +18,7 @@ const media = (collection: string, slug: string): MediaAsset[] =>
       const name = path.split("/").at(-1) ?? "image";
       return { name, path: `./${name}`, url: module.default.src };
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .toSorted((a, b) => a.name.localeCompare(b.name));
 
 export async function getAdminRows(): Promise<ContentRow[]> {
   const [work, projects, education, tools] = await Promise.all([

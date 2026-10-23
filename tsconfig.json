@@ -3,8 +3,7 @@
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist", "alchemy.run.ts"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] },
+    "paths": { "@/*": ["./src/*"] },
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "types": ["@cloudflare/workers-types"]

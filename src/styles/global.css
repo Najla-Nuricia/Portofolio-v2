@@ -221,14 +221,14 @@
   }
 }
 
-@keyframes art-tile-enter {
+@keyframes art-gallery-lane-reveal {
   from {
     opacity: 0;
-    transform: translateY(14px) rotate(var(--art-reveal-tilt)) scale(0.98);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) rotate(0deg) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -245,11 +245,13 @@
   .button {
     @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[9px] border border-foreground bg-foreground px-4 py-2.5 text-sm font-medium text-background no-underline shadow-sm transition-[transform,box-shadow,background-color] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.985] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
   }
-  .art-tile-enter {
-    animation: art-tile-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--art-reveal-delay) both;
-  }
   .button.secondary {
     @apply border-border bg-card text-foreground hover:bg-muted;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .art-gallery-lane-reveal {
+      animation: art-gallery-lane-reveal 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
   }
   .pill {
     @apply inline-flex min-h-9 items-center rounded-[7px] border bg-card px-3 py-1.5 text-xs shadow-xs;

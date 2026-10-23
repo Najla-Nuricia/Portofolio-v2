@@ -15,7 +15,7 @@ const backgrounds = ["bg-chart-5/35", "bg-secondary/45", "bg-chart-4/30", "bg-pr
   <div class="relative overflow-hidden rounded-[16px] border border-white/80 bg-card p-2 shadow-[0_24px_55px_-42px_oklch(0.35_0.04_20/.48),0_2px_8px_-5px_oklch(0.35_0.04_20/.28),inset_0_1px_0_white] transition-[transform,box-shadow] duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_30px_65px_-42px_oklch(0.35_0.04_20/.58),0_4px_12px_-6px_oklch(0.35_0.04_20/.28),inset_0_1px_0_white]">
     <div class:list={["relative grid min-h-104 place-items-center overflow-hidden rounded-[11px] border max-[700px]:min-h-80", backgrounds[index % backgrounds.length]]}>
       <span class="absolute left-3 top-3 rounded-[6px] border border-white/75 bg-card/80 px-2 py-1 font-mono text-[10px] text-muted-foreground backdrop-blur">0{index + 1}</span>
-      <Image class="max-h-84 w-[min(78%,39rem)] object-contain drop-shadow-[0_20px_18px_oklch(0.3_0.03_20/.22)] [image-rendering:pixelated] transition-transform duration-300 group-hover:scale-[1.035]" src={project.data.cover} alt={`Preview of ${project.data.title}`} widths={[480, 800]} sizes="(max-width: 700px) 100vw, 50vw" />
+      <Image class="max-h-84 w-[min(78%,39rem)] object-contain drop-shadow-[0_20px_18px_oklch(0.3_0.03_20/.22)] transition-transform duration-300 group-hover:scale-[1.035]" src={project.data.cover} alt={`Preview of ${project.data.title}`} widths={[480, 800]} sizes="(max-width: 700px) 100vw, 50vw" quality={100} />
       <span class="absolute right-3 top-3 grid size-8 place-items-center rounded-[7px] border border-white/75 bg-card/80 text-xs backdrop-blur" aria-hidden="true">↗</span>
     </div>
   </div>

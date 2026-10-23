@@ -45,9 +45,9 @@ export default Alchemy.Stack(
       main: "./dist/server/entry.mjs",
       assets: "./dist/client",
       compatibility: { flags: ["nodejs_compat"] },
+      cache: { enabled: true, crossVersionCache: true },
       domain,
       env: {
-        IMAGES: Cloudflare.Images.Images(),
         ART_BUCKET: artBucket,
         DATABASE: database,
         GITHUB_REPOSITORY: yield* GITHUB_REPOSITORY,

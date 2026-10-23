@@ -35,7 +35,10 @@ export const GET: APIRoute = ({ params, request }) =>
       );
       const object = yield* attempt(
         () =>
-          env.ART_BUCKET.get(`art/${image}`, { range: request.headers, onlyIf: request.headers }),
+          env.ART_BUCKET.get(`art/${image}`, {
+            range: request.headers,
+            onlyIf: request.headers,
+          }),
         { message: "Image storage unavailable", status: 502 },
       );
       return objectResponse(object);

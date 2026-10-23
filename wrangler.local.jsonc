@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "najla-portfolio-local",
+  "compatibility_date": "2026-10-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DATABASE",
+      "database_name": "najla-portfolio-local",
+      "database_id": "00000000-0000-0000-0000-000000000001",
+      "migrations_dir": "./migrations",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ART_BUCKET",
+      "bucket_name": "najla-portfolio-art-local",
+    },
+  ],
+}

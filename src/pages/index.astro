@@ -18,6 +18,23 @@ const art = (await listArt()).filter((item) => !item.hidden).map((item) => ({
 }));
 const workDetails = await Promise.all(work.map(async (item) => ({ item, Content: (await render(item)).Content })));
 const educationDetails = await Promise.all(education.map(async (item) => ({ item, Content: (await render(item)).Content })));
+const workGroups = workDetails.reduce<Array<{ organization: string; entries: typeof workDetails }>>((groups, entry) => {
+  const organization = entry.item.data.organization;
+  const group = groups.find((candidate) => candidate.organization === organization);
+
+  if (group) {
+    group.entries.push(entry);
+  } else {
+    groups.push({ organization, entries: [entry] });
+  }
+
+  return groups;
+}, []);
+workGroups.forEach((group) => {
+  group.entries = group.entries.toSorted(
+    (a, b) => a.item.data.startDate.getTime() - b.item.data.startDate.getTime(),
+  );
+});
 
 ---
 
@@ -71,21 +88,38 @@ const educationDetails = await Promise.all(education.map(async (item) => ({ item
                 <span class="font-mono text-[10px] uppercase tracking-[.14em] text-muted-foreground">{work.length} roles</span>
               </div>
               <div>
-                {workDetails.map(({ item, Content }, index) => (
-                  <MotionReveal client:visible delay={index * 0.08}>
-                    <article class="group grid grid-cols-[2.25rem_1fr] gap-x-4 border-b border-foreground/15 py-7 sm:grid-cols-[2.25rem_1fr_auto] sm:gap-x-6">
-                      <span class="pt-1 font-mono text-[10px] text-primary">0{index + 1}</span>
-                      <div>
-                        <p class="mb-2 text-xs text-primary">{item.data.organization}</p>
-                        <h4 class="m-0 text-[clamp(1.6rem,3vw,2.4rem)] leading-none tracking-[-.035em] transition-transform duration-300 group-hover:translate-x-1">
-                          {item.data.role}
-                        </h4>
-                        <div class="prose mt-4 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
-                      </div>
-                      <time class="col-start-2 mt-4 whitespace-nowrap font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground sm:col-start-3 sm:row-start-1 sm:mt-1">
-                        {formatRange(item.data.startDate, item.data.endDate)}
-                      </time>
-                    </article>
+                {workGroups.map((group, groupIndex) => (
+                  <MotionReveal client:visible delay={groupIndex * 0.08}>
+                    <section class="border-b border-foreground/15 py-7" aria-label={`Experience at ${group.organization}`}>
+                      <header class="mb-6 flex items-baseline justify-between gap-4">
+                        <h4 class="m-0 text-xs font-semibold tracking-[.04em] text-primary">{group.organization}</h4>
+                        <span class="font-mono text-[10px] uppercase tracking-[.1em] text-muted-foreground">
+                          {group.entries.length} {group.entries.length === 1 ? "role" : "roles"}
+                        </span>
+                      </header>
+                      <ol class="relative m-0 list-none space-y-8 p-0 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-primary/30">
+                        {group.entries.map(({ item, Content }, index) => (
+                          <li class="group relative pl-7">
+                            <span
+                              aria-hidden="true"
+                              class:list={[
+                                "absolute left-0 top-[.35rem] size-[11px] rounded-full border-2 border-card bg-primary transition-transform duration-300 group-hover:scale-125",
+                                index === group.entries.length - 1 && "ring-4 ring-primary/10",
+                              ]}
+                            ></span>
+                            <div class="flex items-start justify-between gap-5 max-[520px]:flex-col max-[520px]:gap-2">
+                              <h5 class="m-0 text-[clamp(1.6rem,3vw,2.4rem)] leading-none tracking-[-.035em] transition-transform duration-300 group-hover:translate-x-1">
+                                {item.data.role}
+                              </h5>
+                              <time class="whitespace-nowrap pt-1 font-mono text-[10px] uppercase tracking-[.08em] text-muted-foreground">
+                                {formatRange(item.data.startDate, item.data.endDate)}
+                              </time>
+                            </div>
+                            <div class="prose mt-4 max-w-2xl text-sm leading-7 text-muted-foreground"><Content /></div>
+                          </li>
+                        ))}
+                      </ol>
+                    </section>
                   </MotionReveal>
                 ))}
               </div>

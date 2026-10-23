@@ -7,7 +7,11 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://nacia.ryuko.my.id",
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare(
+    process.env.PORTFOLIO_LOCAL === "1"
+      ? { configPath: "./wrangler.local.jsonc", persistState: true }
+      : {},
+  ),
   integrations: [solid(), mdx()],
   vite: {
     plugins: [tailwindcss()],

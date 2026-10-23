@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Motion } from "solid-motionone";
-import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
+import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 export interface ArtGalleryItem {
   id: string;
@@ -10,35 +10,37 @@ export interface ArtGalleryItem {
 }
 
 const previewCount = 8;
-const revealBatchSize = 8;
 
 export default function ArtGallery(props: { art: ArtGalleryItem[] }) {
-  const [visibleCount, setVisibleCount] = createSignal(Math.min(previewCount, props.art.length));
-  const [newlyVisible, setNewlyVisible] = createSignal(new Set<string>());
+  const [expanded, setExpanded] = createSignal(false);
   const [selected, setSelected] = createSignal<ArtGalleryItem>();
   const [reduced, setReduced] = createSignal(
     typeof window !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
   const [columns, setColumns] = createSignal(2);
-  const visible = createMemo(() => props.art.slice(0, visibleCount()));
-  const itemsForColumn = (column: number) =>
-    visible().filter((_, index) => index % columns() === column);
-  const hasMore = () => visibleCount() < props.art.length;
-
-  const updateVisibleCount = () => {
-    if (!hasMore()) {
-      setVisibleCount(Math.min(previewCount, props.art.length));
-      setNewlyVisible(new Set<string>());
-      return;
-    }
-
-    const start = visibleCount();
-    const next = Math.min(start + revealBatchSize, props.art.length);
-    setNewlyVisible(
-      (current) => new Set([...current, ...props.art.slice(start, next).map((item) => item.id)]),
-    );
-    setVisibleCount(next);
-  };
+  const previewItemsForColumn = (column: number) =>
+    props.art.slice(0, previewCount).filter((_, index) => index % columns() === column);
+  const additionalItemsForColumn = (column: number) =>
+    props.art
+      .slice(previewCount)
+      .filter((_, index) => (index + previewCount) % columns() === column);
+  const visibleCount = () =>
+    expanded() ? props.art.length : Math.min(previewCount, props.art.length);
+  const artTile = (item: ArtGalleryItem) => (
+    <button
+      type="button"
+      class="group block w-full min-w-0 max-w-full cursor-zoom-in overflow-hidden rounded-[10px] p-0 text-left motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:hover:-translate-y-0.5 active:scale-[0.985] sm:rounded-[14px]"
+      onClick={() => setSelected(item)}
+    >
+      <img
+        class="block h-auto w-full max-w-full rounded-[8px] object-contain transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover:scale-[1.015] sm:rounded-[12px]"
+        src={item.src}
+        alt={item.name}
+        loading="lazy"
+        decoding="async"
+      />
+    </button>
+  );
 
   onMount(() => {
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -64,40 +66,12 @@ export default function ArtGallery(props: { art: ArtGalleryItem[] }) {
       <For each={Array.from({ length: columns() }, (_, column) => column)}>
         {(column) => (
           <div class="art-gallery-column grid min-w-0 content-start gap-2.5 sm:gap-4 lg:gap-5">
-            <For each={itemsForColumn(column)}>
-              {(item, index) => (
-                <Motion.button
-                  type="button"
-                  class="group block w-full min-w-0 max-w-full cursor-zoom-in overflow-hidden rounded-[10px] p-0 text-left active:scale-[0.985] sm:rounded-[14px]"
-                  classList={{
-                    "art-tile-enter": newlyVisible().has(item.id) && !reduced(),
-                  }}
-                  style={{
-                    "--art-reveal-delay": `${Math.min(index() * 35, 175)}ms`,
-                    "--art-reveal-tilt": index() % 2 ? "0.6deg" : "-0.6deg",
-                  }}
-                  hover={
-                    reduced()
-                      ? undefined
-                      : {
-                          transform: `translateY(-3px) rotate(${index() % 2 ? "0.35deg" : "-0.35deg"}) scale(1.005)`,
-                        }
-                  }
-                  transition={{
-                    duration: reduced() ? 0 : 0.22,
-                    easing: [0.22, 1, 0.36, 1],
-                  }}
-                  onClick={() => setSelected(item)}
-                >
-                  <img
-                    class="block h-auto w-full max-w-full rounded-[8px] object-contain transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover:scale-[1.015] sm:rounded-[12px]"
-                    src={item.src}
-                    alt={item.name}
-                    loading="lazy"
-                  />
-                </Motion.button>
-              )}
-            </For>
+            <For each={previewItemsForColumn(column)}>{artTile}</For>
+            <Show when={expanded()}>
+              <div class="art-gallery-lane-reveal grid min-w-0 content-start gap-2.5 sm:gap-4 lg:gap-5">
+                <For each={additionalItemsForColumn(column)}>{artTile}</For>
+              </div>
+            </Show>
           </div>
         )}
       </For>
@@ -114,18 +88,16 @@ export default function ArtGallery(props: { art: ArtGalleryItem[] }) {
             type="button"
             class="button secondary group mx-auto mt-8 flex cursor-pointer active:scale-[0.97]"
             aria-controls="art-gallery-grid"
-            aria-expanded={visibleCount() > previewCount}
-            onClick={updateVisibleCount}
+            aria-expanded={expanded()}
+            onClick={() => setExpanded((current) => !current)}
           >
             <span>
-              {hasMore()
-                ? `See ${Math.min(revealBatchSize, props.art.length - visibleCount())} more artworks`
-                : "Show fewer artworks"}
+              {expanded() ? "Show fewer artworks" : `See all ${props.art.length} artworks`}
             </span>
             <span class="font-mono text-[10px] text-muted-foreground">
               {visibleCount()} / {props.art.length}
             </span>
-            <span aria-hidden="true">{hasMore() ? "↓" : "↑"}</span>
+            <span aria-hidden="true">{expanded() ? "↑" : "↓"}</span>
           </button>
         </Show>
       </div>

@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "wrangler d1 migrations apply najla-portfolio-local --local --config wrangler.local.jsonc && PORTFOLIO_LOCAL=1 astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "wrangler d1 migrations apply najla-portfolio-local --local --config wrangler.local.jsonc && PORTFOLIO_LOCAL=1 astro preview",
     "test": "vitest run",
     "lint": "oxlint src schema tests astro.config.ts alchemy.run.ts",
     "format": "oxfmt .",

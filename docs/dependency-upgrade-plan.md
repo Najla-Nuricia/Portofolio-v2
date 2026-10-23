@@ -9,7 +9,7 @@
 - Updated direct dependencies to the selected latest stable versions, including Astro 7.4.2 / MDX 8.1.1 / Cloudflare adapter 14.4.2, TanStack Markdown 1.0.0, Solid Table 9.3.1, Vite+ 1.4.0, and Vitest 5.0.5. Same-major updates are captured in the table below.
 - Moved the coupled Effect stack from beta to stable 4.0.6 and advanced Alchemy to beta.83 with its exact Drizzle ORM/Kit 1.0.0 RC peer versions. These packages remain prerelease where their `latest` channel is prerelease.
 - Kept TypeScript 6.0.3 under the `typescript` package name for Astro’s checker and installed TypeScript 7.0.2 as `@typescript/native`. The `tsconfig` path alias now uses a relative target because TypeScript 7 removes `baseUrl`.
-- Migrated `ContentTable.tsx` to Solid Table v9, removed the obsolete D1 schema option from Drizzle setup, and changed Alchemy D1 config from `migrationsDir` to `migrations`. No live database migration or deployment was run.
+- Migrated `ContentTable.tsx` to Solid Table v9, removed the obsolete D1 schema option from Drizzle setup, changed Alchemy D1 config from `migrationsDir` to `migrations`, and normalized the remaining Astronaut Farm relation to Astro's entry ID. No live database migration or deployment was run.
 - Verified the regenerated lockfile with frozen install, `vp run check`, `bun run build`, TypeScript 6 and 7 checks (including `alchemy.run.ts`), and `bun run format:check`. Astro check/build complete without errors. The existing Oxlint `sort()` warning was fixed with `toSorted()`.
 
 ## Major upgrade migration notes
